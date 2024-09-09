@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +19,7 @@ public class MovementRecord {
     private long id;
 
     @Column(nullable = false)
-    private long movementReference;
+    private String movementReference;
 
     private long bankAccountId;
 
@@ -31,7 +30,7 @@ public class MovementRecord {
     private double amount;
 
     @Column(nullable = false)
-    private LocalDate creatAt;
+    private LocalDateTime creatAt;
 
     @Column(nullable = false, length = 500)
     private String description;

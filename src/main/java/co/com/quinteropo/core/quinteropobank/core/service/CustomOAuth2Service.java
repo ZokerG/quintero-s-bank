@@ -24,6 +24,8 @@ public class CustomOAuth2Service extends DefaultOAuth2UserService {
         log.info("OAuth2UserRequest: {}", userRequest);
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info("OAuth2User: {}", oAuth2User);
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
         return oAuth2User;
     }
 }
