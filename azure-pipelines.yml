@@ -36,4 +36,4 @@ steps:
       scriptLocation: 'inlineScript'
       inlineScript: |
         az aks get-credentials --resource-group $(resourceGroup) --name $(aksCluster)
-        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f deployment.yaml
