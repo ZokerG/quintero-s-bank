@@ -44,15 +44,19 @@ public class TransferService {
     public TransferRecord createTransfer(CreateTransferRequest createTransferRequest) {
         log.info("Inside TransferService::createTransfer createTransferRequest: {}", createTransferRequest);
         double amount = createTransferRequest.getAmount();
-        double balanceAccount = bankAccountService.getBalanceByBankAccount(createTransferRequest.getBankAccountOriginId());
+        double balanceAccountOrigin = bankAccountService.getBalanceByBankAccount(createTransferRequest.getBankAccountOriginId());
+        double balanceAccountDestination = bankAccountService.getBalanceByBankAccount(createTransferRequest.getBankAccountDestinationId());
         String description = generateDescription(createTransferRequest.getBankAccountOriginId(), createTransferRequest.getBankAccountDestinationId());
+        double balance = balanceAccountOrigin - amount;
 
-        if (balanceAccount < amount) {
+        if (balanceAccountOrigin < amount) {
             throw new ArithmeticException("Insufficient funds");
         }
-
+        log.info("balance {}", balance);
         movementService.createMovement(createTransferRequest.getBankAccountOriginId(), MovementType.WITHDRAWAL.name(), amount, createTransferRequest.getDescription());
         movementService.createMovement(createTransferRequest.getBankAccountDestinationId(), MovementType.DEPOSIT.name(), amount, createTransferRequest.getDescription());
+        bankAccountService.updateBalance(createTransferRequest.getBankAccountOriginId(), balance);
+        bankAccountService.updateBalance(createTransferRequest.getBankAccountDestinationId(), balanceAccountDestination + amount);
         return transferRepository.save(TransferMapper.toCreateTransferRecord(
                 createTransferRequest.getCategoryId(), createTransferRequest.getBankAccountOriginId(), createTransferRequest.getBankAccountDestinationId(),
                 createTransferRequest.getAmount(), description, MovementType.EXTERNAL_TRANSFER.name()

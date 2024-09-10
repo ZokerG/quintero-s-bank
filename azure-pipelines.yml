@@ -1,0 +1,37 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: 'Azure for Students'
+  acrName: 'quinterosbank'
+  aksCluster: 'quinteros-bank'
+  resourceGroup: 'carlos-student'
+  containerRegistry: 'quinterosbank.azurecr.io'
+  imageName: 'quinteros-bank-backend'
+
+steps:
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'package'
+      options: '-DskipTests'
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: '$(acrName)'
+      repository: '$(containerRegistry)/$(imageName)'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
+      tags: '$(Build.BuildId)'
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: '$(azureSubscription)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az aks get-credentials --resource-group $(resourceGroup) --name $(aksCluster)
+        kubectl apply -f k8s/deployment.yaml

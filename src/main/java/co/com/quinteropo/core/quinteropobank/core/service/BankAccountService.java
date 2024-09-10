@@ -85,4 +85,10 @@ public class BankAccountService {
         BankAccountRecord bankAccount = findById(bankAccountId);
         return bankAccount.getTotalBalance();
     }
+
+    public void updateBalance(long bankAccountId, double amount){
+        BankAccountRecord bankAccount = findById(bankAccountId);
+        bankAccount.setTotalBalance(amount);
+        bankAccountRepository.save(bankAccount);
+    }
 }

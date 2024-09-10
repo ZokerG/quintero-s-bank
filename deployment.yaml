@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quinteros-bank
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quinteros-bank
+  template:
+    metadata:
+      labels:
+        app: quinteros-bank
+    spec:
+      containers:
+        - name: quinteros-bank
+          image: quinterosbank.azurecr.io/quinteros-bank-backend:v1
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quinteros-bank
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: quinteros-bank

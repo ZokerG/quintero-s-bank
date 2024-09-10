@@ -37,9 +37,7 @@ public class TransferRecord {
     @Column(length = 500)
     private String description;
 
-    @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
-    private String type;
+   private String type;
 }
