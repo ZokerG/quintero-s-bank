@@ -4,7 +4,7 @@ trigger:
 pool:
   name: 'Default'  # Usamos el pool Default donde registraste tu agente auto-hospedado
   demands:
-    - agent.name -equals {DESKTOP-G75CH1I}
+    - agent.name -equals DESKTOP-G75CH1I
 
 variables:
   azureSubscription: 'Azure for Students(60e820d9-b0da-4934-af4c-e1da82d9d1ac)'
