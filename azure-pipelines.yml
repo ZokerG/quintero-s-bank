@@ -13,6 +13,15 @@ variables:
   imageName: 'quinteros-bank-backend'
 
 steps:
+  - task: HelmDeploy@1
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceConnection: 'quinteros-bank'
+      namespace: 'quinteros-bank'
+      azureSubscriptionForACR: 'Azure for Students(60e820d9-b0da-4934-af4c-e1da82d9d1ac)'
+      azureResourceGroupForACR: 'carlos-student'
+      azureContainerRegistry: 'quinterosbank.azurecr.io'
+      command: 'login'
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
