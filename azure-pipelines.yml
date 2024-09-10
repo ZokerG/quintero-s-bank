@@ -37,3 +37,4 @@ steps:
       inlineScript: |
         az aks get-credentials --resource-group $(resourceGroup) --name $(aksCluster)
         kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
