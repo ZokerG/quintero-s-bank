@@ -3,6 +3,8 @@ package co.com.quinteropo.core.quinteropobank.core.service;
 
 import co.com.quinteropo.core.quinteropobank.common.enums.MovementType;
 import co.com.quinteropo.core.quinteropobank.common.mapper.MovementMapper;
+import co.com.quinteropo.core.quinteropobank.common.response.DashResponse;
+import co.com.quinteropo.core.quinteropobank.common.response.SeriesResponse;
 import co.com.quinteropo.core.quinteropobank.domain.model.MovementRecord;
 import co.com.quinteropo.core.quinteropobank.domain.repository.MovementRepository;
 import jakarta.persistence.EntityManager;
@@ -11,6 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.*;
+
 @Slf4j
 @Service
 public class MovementService {
@@ -57,6 +65,47 @@ public class MovementService {
     public Page<MovementRecord> findByBankAccountId(long bankAccountId, int page, int size) {
         log.info("Inside MovementService::findByBankAccountId bankAccountId: {} page: {} size: {}", bankAccountId, page, size);
         return movementRepository.findAllByBankAccountId(bankAccountId, PageRequest.of(page, size));
+    }
+
+    public List<DashResponse> getDashInfo(long bankAccountId) {
+        log.info("Inside MovementService::getDashInfo bankAccountId: {}", bankAccountId);
+        List<MovementRecord> movements = movementRepository.findAllByBankAccountIdOrderByCreatAtDesc(bankAccountId);
+
+        Map<String, Map<Integer, Double>> depositMap = new HashMap<>();
+        Map<String, Map<Integer, Double>> withdrawalMap = new HashMap<>();
+
+        for (MovementRecord movement : movements) {
+            LocalDateTime date = movement.getCreatAt();
+            int month = date.getMonthValue();
+            String type = movement.getType();
+            double amount = movement.getAmount();
+
+            if (type.equals(MovementType.DEPOSIT.name())) {
+                depositMap.computeIfAbsent(type, k -> new HashMap<>()).merge(month, amount, Double::sum);
+            } else if (type.equals(MovementType.WITHDRAWAL.name())) {
+                withdrawalMap.computeIfAbsent(type, k -> new HashMap<>()).merge(month, amount, Double::sum);
+            }
+        }
+
+        List<SeriesResponse> depositSeries = new ArrayList<>();
+        for (Map.Entry<Integer, Double> entry : depositMap.getOrDefault(MovementType.DEPOSIT.name(), new HashMap<>()).entrySet()) {
+            depositSeries.add(SeriesResponse.builder().name(getMonthName(entry.getKey())).value(entry.getValue()).build());
+        }
+
+        List<SeriesResponse> withdrawalSeries = new ArrayList<>();
+        for (Map.Entry<Integer, Double> entry : withdrawalMap.getOrDefault(MovementType.WITHDRAWAL.name(), new HashMap<>()).entrySet()) {
+            withdrawalSeries.add(SeriesResponse.builder().name(getMonthName(entry.getKey())).value(entry.getValue()).build());
+        }
+
+        List<DashResponse> dashResponses = new ArrayList<>();
+        dashResponses.add(DashResponse.builder().name("Deposits").series(depositSeries).build());
+        dashResponses.add(DashResponse.builder().name("Withdrawals").series(withdrawalSeries).build());
+
+        return dashResponses;
+    }
+
+    private String getMonthName(int month) {
+        return Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
 

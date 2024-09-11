@@ -1,11 +1,14 @@
 package co.com.quinteropo.core.quinteropobank.controller;
 
 
+import co.com.quinteropo.core.quinteropobank.common.response.DashResponse;
 import co.com.quinteropo.core.quinteropobank.core.service.MovementService;
 import co.com.quinteropo.core.quinteropobank.domain.model.MovementRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/movement")
@@ -36,5 +39,10 @@ public class MovementController {
     @GetMapping("/find-by-bank-account-id/{bankAccountId}")
     public Page<MovementRecord> findByBankAccountId(@PathVariable long bankAccountId, int page, int size) {
         return movementService.findByBankAccountId(bankAccountId, page, size);
+    }
+
+    @GetMapping("/chart/{bankAccountId}")
+    public List<DashResponse> getDashInfo(@PathVariable long bankAccountId) {
+        return movementService.getDashInfo(bankAccountId);
     }
 }

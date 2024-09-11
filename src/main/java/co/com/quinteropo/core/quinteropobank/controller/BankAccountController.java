@@ -1,8 +1,10 @@
 package co.com.quinteropo.core.quinteropobank.controller;
 
 
+import co.com.quinteropo.core.quinteropobank.common.response.DashCardResponse;
 import co.com.quinteropo.core.quinteropobank.core.service.BankAccountService;
 import co.com.quinteropo.core.quinteropobank.domain.model.BankAccountRecord;
+import co.com.quinteropo.core.quinteropobank.domain.model.projections.ClientMovementSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +41,10 @@ public class BankAccountController {
     @GetMapping("/find-by-account-number")
     public BankAccountRecord findByAccountNumber(@RequestParam String accountNumber) {
         return bankAccountService.findByAccountNumber(accountNumber);
+    }
+
+    @GetMapping("/dash/{clientId}")
+    public DashCardResponse findDashCardByClientId(@PathVariable long clientId) {
+        return bankAccountService.findDashCardByClientId(clientId);
     }
 }

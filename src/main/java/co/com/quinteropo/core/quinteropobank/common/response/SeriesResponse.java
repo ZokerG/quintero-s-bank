@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserInfoResponse {
+public class SeriesResponse {
+    private double value;
     private String name;
-    private String jwt;
-    private long clientId;
 }

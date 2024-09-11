@@ -6,6 +6,8 @@ import co.com.quinteropo.core.quinteropobank.domain.model.TransferRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/transfer")
 public class TransferController {
@@ -34,5 +36,10 @@ public class TransferController {
     @PostMapping("/create")
     public TransferRecord createTransfer(@RequestBody CreateTransferRequest createTransferRequest) {
         return transferService.createTransfer(createTransferRequest);
+    }
+
+    @GetMapping("/find-all-by-bank-account/{bankAccountOriginId}")
+    public List<TransferRecord> findAllByBankAccountOriginId(@PathVariable long bankAccountOriginId) {
+        return transferService.findAllByBankAccountOriginId(bankAccountOriginId);
     }
 }

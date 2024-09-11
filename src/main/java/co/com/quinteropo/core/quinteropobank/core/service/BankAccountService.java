@@ -2,9 +2,12 @@ package co.com.quinteropo.core.quinteropobank.core.service;
 
 import co.com.quinteropo.core.quinteropobank.common.enums.AccountType;
 import co.com.quinteropo.core.quinteropobank.common.mapper.BankAccountMapper;
+import co.com.quinteropo.core.quinteropobank.common.response.DashCardResponse;
 import co.com.quinteropo.core.quinteropobank.domain.model.BankAccountRecord;
 import co.com.quinteropo.core.quinteropobank.domain.model.ClientRecord;
+import co.com.quinteropo.core.quinteropobank.domain.model.projections.ClientMovementSummary;
 import co.com.quinteropo.core.quinteropobank.domain.repository.BankAccountRepository;
+import co.com.quinteropo.core.quinteropobank.domain.repository.MovementRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,15 +20,17 @@ public class BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
     private final ClientService clientService;
+    private final MovementRepository movementRepository;
 
 
     private static final String PREFIX = "411001";
 
     private static final double INITIAL_BALANCE = 1000;
 
-    public BankAccountService(BankAccountRepository bankAccountRepository, ClientService clientService) {
+    public BankAccountService(BankAccountRepository bankAccountRepository, ClientService clientService, MovementRepository movementRepository) {
         this.bankAccountRepository = bankAccountRepository;
         this.clientService = clientService;
+        this.movementRepository = movementRepository;
     }
 
     public void deleteBankAccount(long id) {
@@ -90,5 +95,12 @@ public class BankAccountService {
         BankAccountRecord bankAccount = findById(bankAccountId);
         bankAccount.setTotalBalance(amount);
         bankAccountRepository.save(bankAccount);
+    }
+
+    public DashCardResponse findDashCardByClientId(long clientId){
+        BankAccountRecord bankAccount = bankAccountRepository.findByClientId(clientId).orElseThrow(() ->
+                new RuntimeException("Bank account not found"));
+        ClientMovementSummary clientMovementSummary = movementRepository.findClientMovementSummaryByClientId(clientId);
+        return BankAccountMapper.mapToDashCardResponse(bankAccount, clientMovementSummary.getFullName(), clientMovementSummary.getTotalMovements(), clientMovementSummary.getTotalWithdrawals(), clientMovementSummary.getTotalDeposits());
     }
 }

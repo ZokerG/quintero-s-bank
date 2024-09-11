@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserInfoResponse {
+public class DashResponse {
     private String name;
-    private String jwt;
-    private long clientId;
+    private List<SeriesResponse> series;
 }

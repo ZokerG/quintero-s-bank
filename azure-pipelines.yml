@@ -29,6 +29,14 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: '$(Build.BuildId)'
 
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        (Get-Content ./deployment.yaml) -replace 'quinterosbank.azurecr.io/quinteros-bank-backend:.*', 'quinterosbank.azurecr.io/quinteros-bank-backend:$(Build.BuildId)' | Set-Content ./deployment.yaml
+        Write-Host "deployment.yaml actualizado:"
+        Get-Content ./deployment.yaml
+
   - task: AzureCLI@2
     inputs:
       azureSubscription: '$(azureSubscription)'

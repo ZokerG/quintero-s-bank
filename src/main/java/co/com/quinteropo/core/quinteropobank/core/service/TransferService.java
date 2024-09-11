@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class TransferService {
@@ -66,5 +68,9 @@ public class TransferService {
 
     private String generateDescription(long origin, long destination){
         return "Se registro una transferencia desde la cuenta origen: " + origin + " hacia la cuenta destino: " + destination;
+    }
+
+    public List<TransferRecord> findAllByBankAccountOriginId(long bankAccountOriginId) {
+        return transferRepository.findAllByBankAccountOriginIdOrderByCreatAtDesc(bankAccountOriginId);
     }
 }

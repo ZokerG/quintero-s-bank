@@ -58,7 +58,7 @@ public class AuthService {
 
         String jwt = jwtUtil.generateToken(authRequest.getUsername());
 
-        return ResponseEntity.ok(new UserInfoResponse(clientRecord.getName(), jwt));
+        return ResponseEntity.ok(new UserInfoResponse(clientRecord.getName(), jwt, clientRecord.getId()));
     }
 
 
@@ -75,7 +75,7 @@ public class AuthService {
             email = oidcUser.getEmail();
         }
         ClientRecord clientRecord = clientRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Client not found"));
-        return ResponseEntity.ok(new UserInfoResponse(clientRecord.getName(), jwtUtil.generateToken(email)));
+        return ResponseEntity.ok(new UserInfoResponse(clientRecord.getName(), jwtUtil.generateToken(email), clientRecord.getId()));
     }
 
     private boolean bCryptPasswordEncoderMatch(String rawPassword, String encodePassword) {
