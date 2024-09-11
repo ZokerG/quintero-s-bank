@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: quinteros-bank
-          image: quinterosbank.azurecr.io/quinteros-bank-backend:latest
+          image: quintero.azurecr.io/quinteros-bank-backend:latest
           ports:
             - containerPort: 8080
           env:
