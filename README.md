@@ -1,7 +1,8 @@
 # Quintero's Bank
 
+Hola, Buen Dia
 
-
+quintero's bank es un software que atraves de su inovacion ha desarrollado multiple herramientas para la gestion de finanzas, envio de saldo entre cuentas del mismo aplicativo, generacion de reportes, evidencia de grfica de los movimientos financiero realizados por el usuario
 
 
 # Arquitectura Base y procesos tecnicos aplicados 
